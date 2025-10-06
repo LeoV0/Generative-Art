@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const TechArt = () => {
   const canvasRef = useRef(null);
@@ -8,8 +8,17 @@ const TechArt = () => {
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
+
+    // taille initiale
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
+    let centerX = canvas.width / 2;
+    let centerY = canvas.height / 2;
+
+    // Résolution de référence pour le scale texte
+    const BASE_WIDTH = 1920;
+    const BASE_HEIGHT = 1080;
 
     const colors = {
       white: "#ffffff",
@@ -24,14 +33,11 @@ const TechArt = () => {
       darkRed: "#a82b2b",
     };
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-
     // Tableau pour stocker les positions des carrés bleus
     let blueSquares = [];
     let frameCount = 0; // Compteur pour contrôler la vitesse
 
-    // Grille technique avec cases bleues contrôlées
+    // Fonctions de dessin
     function drawGrid() {
       ctx.strokeStyle = colors.lightGray + "80"; // Grille plus visible
       ctx.lineWidth = 1;
@@ -62,14 +68,13 @@ const TechArt = () => {
       // Gestion de la vitesse avec un compteur
       frameCount++;
       if (frameCount % 60 === 0) {
-        // Ajoute un nouveau carré toutes les 60 frames (environ 1 seconde à 60 FPS)
         const x =
           Math.floor(Math.random() * (canvas.width / (spacing * 4))) *
           (spacing * 4);
         const y =
           Math.floor(Math.random() * (canvas.height / (spacing * 4))) *
           (spacing * 4);
-        blueSquares.push({ x, y, life: 120 }); // Durée de vie de 120 frames (2 secondes)
+        blueSquares.push({ x, y, life: 120 }); // (2 secondes)
       }
 
       // Dessiner et mettre à jour les carrés bleus
@@ -86,7 +91,6 @@ const TechArt = () => {
       ctx.filter = "none";
     }
 
-    // Zone bleue abstraite avec dégradé doux
     function drawSkyBox() {
       const skyGradient = ctx.createLinearGradient(400, 100, 900, 400);
       skyGradient.addColorStop(0, colors.lightBlue + "dd");
@@ -104,7 +108,6 @@ const TechArt = () => {
       ctx.filter = "none";
     }
 
-    // Structure centrale fluide et organique avec pulsation
     function drawMainStructure() {
       ctx.save();
 
@@ -134,7 +137,6 @@ const TechArt = () => {
       ctx.restore();
     }
 
-    // Éléments techniques noirs
     function drawBlackElements() {
       ctx.fillStyle = colors.black;
       ctx.fillRect(50, 250, 300, 20);
@@ -148,7 +150,6 @@ const TechArt = () => {
       ctx.fillRect(canvas.width - 350, canvas.height - 100, 200, 12);
     }
 
-    // Lignes techniques partout
     function drawTechnicalLines() {
       ctx.strokeStyle = colors.black;
       ctx.lineWidth = 1;
@@ -181,23 +182,8 @@ const TechArt = () => {
 
       ctx.strokeStyle = colors.gray + "40";
       ctx.lineWidth = 0.5;
-      // const points = [
-      //   [100, 100],
-      //   [canvas.width - 100, 100],
-      //   [100, canvas.height - 100],
-      //   [canvas.width - 100, canvas.height - 100],
-      // ];
-
-      // Supprimé les lignes diagonales vers le centre
-      // points.forEach(([x, y]) => {
-      //   ctx.beginPath();
-      //   ctx.moveTo(x, y);
-      //   ctx.lineTo(centerX, centerY);
-      //   ctx.stroke();
-      // });
     }
 
-    // Cadres et rectangles
     function drawFrames() {
       ctx.strokeStyle = colors.gray;
       ctx.lineWidth = 1;
@@ -221,7 +207,6 @@ const TechArt = () => {
       ctx.setLineDash([]);
     }
 
-    // Croix et marqueurs
     function drawMarkers() {
       ctx.strokeStyle = colors.black;
       ctx.lineWidth = 1.5;
@@ -253,23 +238,24 @@ const TechArt = () => {
       drawTarget(150, canvas.height - 200, 20);
     }
 
-    // Annotations et texte
     function drawText() {
-      // Texte "GENERATIVE ART" en premier
-      ctx.fillStyle = colors.black;
-      ctx.font = "bold 100px Arial, sans-serif";
-      const text = "GENERATIVE ART";
-      // const textWidth = ctx.measureText(text).width;
-      const x = 50; // Position à gauche avec un petit décalage
-      const y = centerY + 140; // Centré sur l'axe Y
-      ctx.fillText(text, x, y + 50); // Ajustement vertical pour centrer visuellement
+      const scale = Math.min(
+        canvas.width / BASE_WIDTH,
+        canvas.height / BASE_HEIGHT
+      );
 
-      // Restauration du texte "NEXUS" en haut
       ctx.fillStyle = colors.black;
-      ctx.font = "bold 68px Arial, sans-serif";
+      ctx.font = `bold ${100 * scale}px Arial, sans-serif`;
+      const text = "GENERATIVE ART";
+      const x = 50;
+      const y = centerY + 140;
+      ctx.fillText(text, x, y + 50);
+
+      ctx.fillStyle = colors.black;
+      ctx.font = `bold ${68 * scale}px Arial, sans-serif`;
       ctx.fillText("NEXUS.", 420, 80);
 
-      ctx.font = "11px Arial, sans-serif";
+      ctx.font = `${11 * scale}px Arial, sans-serif`;
       ctx.fillStyle = colors.gray;
 
       const labels = [
@@ -281,19 +267,19 @@ const TechArt = () => {
         { text: "D", x: centerX - 50, y: canvas.height - 60 },
       ];
 
-      ctx.font = "14px Arial, sans-serif";
+      ctx.font = `${14 * scale}px Arial, sans-serif`;
       labels.forEach(({ text, x, y }) => {
         ctx.fillText(text, x, y);
       });
 
-      ctx.font = "10px Courier New, monospace";
+      ctx.font = `${10 * scale}px Courier New, monospace`;
       ctx.fillStyle = colors.black;
       ctx.fillText("01", 70, 170);
       ctx.fillText("02", 70, 250);
       ctx.fillText("03", 235, 205);
       ctx.fillText("26", canvas.width - 130, canvas.height - 100);
 
-      ctx.font = "11px Arial, sans-serif";
+      ctx.font = `${11 * scale}px Arial, sans-serif`;
       ctx.fillStyle = colors.gray;
       ctx.fillText("2 × 0.618", centerX + 80, 50);
       ctx.fillText("φ 1.618033988", 90, 80);
@@ -301,7 +287,7 @@ const TechArt = () => {
       ctx.fillText("CHANGE", 90, 395);
       ctx.fillText("ERROR", 90, 410);
 
-      ctx.font = "9px Arial, sans-serif";
+      ctx.font = `${9 * scale}px Arial, sans-serif`;
       for (let year = 2008; year <= 2026; year += 2) {
         const x = 100 + (year - 2008) * 80;
         if (x < canvas.width - 200) {
@@ -309,7 +295,7 @@ const TechArt = () => {
         }
       }
 
-      ctx.font = "10px Arial, sans-serif";
+      ctx.font = `${10 * scale}px Arial, sans-serif`;
       const rightText = [
         "SYNTHESIS",
         "CORE.",
@@ -335,40 +321,26 @@ const TechArt = () => {
       ctx.stroke();
     }
 
-    // Stylized tech blueprint image (without blue triangles)
     function drawTechBlueprint() {
       ctx.save();
       ctx.strokeStyle = colors.gray;
       ctx.lineWidth = 1;
-
-      // Supprimé les deux traits dans le carré central
-      // ctx.beginPath();
-      // ctx.moveTo(centerX - 120, centerY + 70);
-      // ctx.lineTo(centerX - 70, centerY + 80);
-      // ctx.moveTo(centerX + 70, centerY + 80);
-      // ctx.lineTo(centerX + 120, centerY + 70);
-      // ctx.stroke();
-
       ctx.restore();
     }
 
-    // Nouvelles formes et écriture japonaise au-dessus de l'image en bas à droite avec nouvelles images
     function drawJapaneseStyleAboveImage() {
       ctx.save();
       ctx.fillStyle = colors.black;
 
-      // Zone au-dessus de l'image (ajustée pour couvrir l'espace de canvas.width - 450 à canvas.width - 50, et canvas.height - 650 à canvas.height - 350)
       const imgX = canvas.width - 450;
-      const imgY = canvas.height - 300; // Position de l'image existante
-      const topY = imgY - 300; // 300 pixels au-dessus de l'image
+      const imgY = canvas.height - 300;
+      const topY = imgY - 300;
 
-      // Écriture japonaise
       ctx.font = "bold 20px 'Arial', sans-serif";
-      ctx.fillText("龍", imgX + 50, topY + 100); // Caractère "Dragon"
-      ctx.fillText("風", imgX + 200, topY + 200); // Caractère "Vent"
-      ctx.fillText("山", imgX + 300, topY + 150); // Caractère "Montagne"
+      ctx.fillText("龍", imgX + 50, topY + 100);
+      ctx.fillText("風", imgX + 200, topY + 200);
+      ctx.fillText("山", imgX + 300, topY + 150);
 
-      // Ajout des nouvelles images
       const img4 = new Image();
       img4.crossOrigin = "anonymous";
       img4.src =
@@ -380,8 +352,8 @@ const TechArt = () => {
 
       if (img4.complete && img5.complete) {
         ctx.globalAlpha = 0.7;
-        ctx.drawImage(img4, imgX + 50, imgY - 150, 150, 150); // Au-dessus de l'image existante, décalé à droite
-        ctx.drawImage(img5, imgX + 220, imgY - 150, 150, 150); // À côté de img4
+        ctx.drawImage(img4, imgX + 50, imgY - 150, 150, 150);
+        ctx.drawImage(img5, imgX + 220, imgY - 150, 150, 150);
         ctx.globalAlpha = 1;
       }
 
@@ -395,36 +367,38 @@ const TechArt = () => {
 
       drawGrid();
       drawSkyBox();
-      drawBlackElements(); // Carré noir dessiné avant le texte
+      drawBlackElements();
       drawTechnicalLines();
       drawMainStructure();
       drawFrames();
       drawMarkers();
-      drawText(); // Texte dessiné après pour passer devant
+      drawText();
       drawTechBlueprint();
-      drawJapaneseStyleAboveImage(); // Ajout de la nouvelle fonction
+      drawJapaneseStyleAboveImage();
+
       if (img1 && img1.complete) {
         ctx.save();
         ctx.globalAlpha = 0.7;
-        ctx.drawImage(img1, canvas.width - 450, canvas.height - 300, 400, 300); // Ajustement de la position Y
+        ctx.drawImage(img1, canvas.width - 450, canvas.height - 300, 400, 300);
         ctx.restore();
       }
       if (img2 && img2.complete) {
         ctx.save();
         ctx.globalAlpha = 0.7;
-        ctx.drawImage(img2, canvas.width - 190, 0, 150, 150); // Top-right before 'F'
+        ctx.drawImage(img2, canvas.width - 190, 0, 150, 150);
         ctx.restore();
       }
       if (img3 && img3.complete) {
         ctx.save();
         ctx.globalAlpha = 0.7;
-        ctx.drawImage(img3, 20, canvas.height - 220, 200, 200); // Bottom-left position
+        ctx.drawImage(img3, 20, canvas.height - 220, 200, 200);
         ctx.restore();
       }
 
       requestAnimationFrame(animate);
     }
 
+    // Images
     const img1 = new Image();
     img1.crossOrigin = "anonymous";
     img1.src =
@@ -457,28 +431,11 @@ const TechArt = () => {
       };
     });
 
-    // Gestion du resize
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      if (img1 && img1.complete) {
-        ctx.save();
-        ctx.globalAlpha = 0.7;
-        ctx.drawImage(img1, canvas.width - 450, canvas.height - 300, 400, 300); // Ajustement de la position Y
-        ctx.restore();
-      }
-      if (img2 && img2.complete) {
-        ctx.save();
-        ctx.globalAlpha = 0.7;
-        ctx.drawImage(img2, canvas.width - 200, 20, 150, 150);
-        ctx.restore();
-      }
-      if (img3 && img3.complete) {
-        ctx.save();
-        ctx.globalAlpha = 0.7;
-        ctx.drawImage(img3, 20, canvas.height - 220, 200, 200);
-        ctx.restore();
-      }
+      centerX = canvas.width / 2;
+      centerY = canvas.height / 2;
     };
 
     window.addEventListener("resize", handleResize);
