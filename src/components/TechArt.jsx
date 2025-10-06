@@ -33,6 +33,16 @@ const TechArt = () => {
       darkRed: "#a82b2b",
     };
 
+    function drawCopyright() {
+      ctx.save();
+      ctx.fillStyle = colors.black;
+      ctx.font = "12px Arial";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("Copyright Léo - 2025", 20, canvas.height - 20);
+      ctx.restore();
+    }
+
     // Tableau pour stocker les positions des carrés bleus
     let blueSquares = [];
     let frameCount = 0; // Compteur pour contrôler la vitesse
@@ -394,6 +404,8 @@ const TechArt = () => {
         ctx.drawImage(img3, 20, canvas.height - 220, 200, 200);
         ctx.restore();
       }
+
+      drawCopyright();
 
       requestAnimationFrame(animate);
     }
