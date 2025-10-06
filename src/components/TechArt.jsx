@@ -27,10 +27,14 @@ const TechArt = () => {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
-    // Grille technique subtile
+    // Tableau pour stocker les positions des carrés bleus
+    let blueSquares = [];
+    let frameCount = 0; // Compteur pour contrôler la vitesse
+
+    // Grille technique avec cases bleues contrôlées
     function drawGrid() {
-      ctx.strokeStyle = colors.lightGray + "40";
-      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = colors.lightGray + "80"; // Grille plus visible
+      ctx.lineWidth = 1;
       const spacing = 40;
 
       for (let x = 0; x < canvas.width; x += spacing) {
@@ -54,6 +58,32 @@ const TechArt = () => {
           }
         }
       }
+
+      // Gestion de la vitesse avec un compteur
+      frameCount++;
+      if (frameCount % 60 === 0) {
+        // Ajoute un nouveau carré toutes les 60 frames (environ 1 seconde à 60 FPS)
+        const x =
+          Math.floor(Math.random() * (canvas.width / (spacing * 4))) *
+          (spacing * 4);
+        const y =
+          Math.floor(Math.random() * (canvas.height / (spacing * 4))) *
+          (spacing * 4);
+        blueSquares.push({ x, y, life: 120 }); // Durée de vie de 120 frames (2 secondes)
+      }
+
+      // Dessiner et mettre à jour les carrés bleus
+      ctx.fillStyle = colors.blue + "40";
+      ctx.filter = "blur(2px)";
+      blueSquares = blueSquares.filter((square) => {
+        if (square.life > 0) {
+          ctx.fillRect(square.x, square.y, spacing, spacing);
+          square.life--; // Réduire la durée de vie
+          return true;
+        }
+        return false;
+      });
+      ctx.filter = "none";
     }
 
     // Zone bleue abstraite avec dégradé doux
@@ -227,7 +257,7 @@ const TechArt = () => {
     function drawText() {
       ctx.fillStyle = colors.black;
       ctx.font = "bold 68px Arial, sans-serif";
-      ctx.fillText("NEXUS", 420, 80);
+      ctx.fillText("NEXUS.", 420, 80);
 
       ctx.font = "11px Arial, sans-serif";
       ctx.fillStyle = colors.gray;
@@ -312,35 +342,38 @@ const TechArt = () => {
       ctx.restore();
     }
 
-    // Nouvelles formes et écriture japonaise au-dessus de l'image en bas à droite
+    // Nouvelles formes et écriture japonaise au-dessus de l'image en bas à droite avec nouvelles images
     function drawJapaneseStyleAboveImage() {
       ctx.save();
       ctx.fillStyle = colors.black;
 
       // Zone au-dessus de l'image (ajustée pour couvrir l'espace de canvas.width - 450 à canvas.width - 50, et canvas.height - 650 à canvas.height - 350)
       const imgX = canvas.width - 450;
-      const imgY = canvas.height - 300; // Descendu de 50 pixels pour ajuster la position
+      const imgY = canvas.height - 300; // Position de l'image existante
       const topY = imgY - 300; // 300 pixels au-dessus de l'image
 
-      // Suppression des formes géométriques (polygone et cercle)
-      // ctx.beginPath();
-      // ctx.moveTo(imgX, topY);
-      // ctx.lineTo(imgX + 100, topY + 50);
-      // ctx.lineTo(imgX + 200, topY);
-      // ctx.lineTo(imgX + 300, topY + 100);
-      // ctx.lineTo(imgX + 400, topY);
-      // ctx.closePath();
-      // ctx.fill();
-
-      // ctx.beginPath();
-      // ctx.arc(imgX + 150, topY + 150, 50, 0, Math.PI * 2);
-      // ctx.fill();
-
-      // Écriture japonaise en plus gros
-      ctx.font = "bold 20px 'Arial', sans-serif"; // Augmentation de la taille à 60px
+      // Écriture japonaise
+      ctx.font = "bold 20px 'Arial', sans-serif";
       ctx.fillText("龍", imgX + 50, topY + 100); // Caractère "Dragon"
       ctx.fillText("風", imgX + 200, topY + 200); // Caractère "Vent"
       ctx.fillText("山", imgX + 300, topY + 150); // Caractère "Montagne"
+
+      // Ajout des nouvelles images
+      const img4 = new Image();
+      img4.crossOrigin = "anonymous";
+      img4.src =
+        "https://res.cloudinary.com/do22snhzp/image/upload/v1759746261/7451ae729eaab0de2b10e7408cf71ffb-removebg-preview_rqh4z6.png";
+      const img5 = new Image();
+      img5.crossOrigin = "anonymous";
+      img5.src =
+        "https://res.cloudinary.com/do22snhzp/image/upload/v1759746325/6a7f81213c340d6e57bc0df277c83d0e-removebg-preview_irvvzg.png";
+
+      if (img4.complete && img5.complete) {
+        ctx.globalAlpha = 0.7;
+        ctx.drawImage(img4, imgX + 50, imgY - 150, 150, 150); // Au-dessus de l'image existante, décalé à droite
+        ctx.drawImage(img5, imgX + 220, imgY - 150, 150, 150); // À côté de img4
+        ctx.globalAlpha = 1;
+      }
 
       ctx.restore();
     }
