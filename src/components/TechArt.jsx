@@ -9,7 +9,7 @@ const TechArt = () => {
 
     const ctx = canvas.getContext("2d");
 
-    // taille initiale
+    // Taille initiale
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -39,7 +39,7 @@ const TechArt = () => {
 
     // Fonctions de dessin
     function drawGrid() {
-      ctx.strokeStyle = colors.lightGray + "80"; // Grille plus visible
+      ctx.strokeStyle = colors.lightGray + "80";
       ctx.lineWidth = 1;
       const spacing = 40;
 
