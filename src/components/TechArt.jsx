@@ -255,6 +255,16 @@ const TechArt = () => {
 
     // Annotations et texte
     function drawText() {
+      // Texte "GENERATIVE ART" en premier
+      ctx.fillStyle = colors.black;
+      ctx.font = "bold 100px Arial, sans-serif";
+      const text = "GENERATIVE ART";
+      // const textWidth = ctx.measureText(text).width;
+      const x = 50; // Position à gauche avec un petit décalage
+      const y = centerY + 140; // Centré sur l'axe Y
+      ctx.fillText(text, x, y + 50); // Ajustement vertical pour centrer visuellement
+
+      // Restauration du texte "NEXUS" en haut
       ctx.fillStyle = colors.black;
       ctx.font = "bold 68px Arial, sans-serif";
       ctx.fillText("NEXUS.", 420, 80);
@@ -385,12 +395,12 @@ const TechArt = () => {
 
       drawGrid();
       drawSkyBox();
-      drawBlackElements();
+      drawBlackElements(); // Carré noir dessiné avant le texte
       drawTechnicalLines();
       drawMainStructure();
       drawFrames();
       drawMarkers();
-      drawText();
+      drawText(); // Texte dessiné après pour passer devant
       drawTechBlueprint();
       drawJapaneseStyleAboveImage(); // Ajout de la nouvelle fonction
       if (img1 && img1.complete) {
