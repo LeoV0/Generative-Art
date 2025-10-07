@@ -20,6 +20,14 @@ const TechArt = () => {
     const BASE_WIDTH = 1920;
     const BASE_HEIGHT = 1080;
 
+    // Souris
+    let mouse = { x: 0, y: 0 };
+    canvas.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+
     const colors = {
       white: "#ffffff",
       offWhite: "#f5f5f5",
@@ -408,6 +416,28 @@ const TechArt = () => {
       drawCopyright();
 
       requestAnimationFrame(animate);
+
+      ctx.save();
+      ctx.strokeStyle = colors.black;
+      ctx.lineWidth = 1.5;
+
+      // Croix
+      ctx.beginPath();
+      ctx.moveTo(mouse.x - 10, mouse.y);
+      ctx.lineTo(mouse.x + 10, mouse.y);
+      ctx.moveTo(mouse.x, mouse.y - 10);
+      ctx.lineTo(mouse.x, mouse.y + 10);
+      ctx.stroke();
+
+      // Coordonnées
+      ctx.fillStyle = colors.gray;
+      ctx.font = "italic 14px Arial";
+      ctx.fillText(
+        `x: ${Math.round(mouse.x)}, y: ${Math.round(mouse.y)}`,
+        mouse.x + 15,
+        mouse.y - 15
+      );
+      ctx.restore();
     }
 
     // Images
@@ -457,7 +487,13 @@ const TechArt = () => {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="full-screen-canvas" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="full-screen-canvas"
+      style={{ cursor: "none" }}
+    />
+  );
 };
 
 export default TechArt;
